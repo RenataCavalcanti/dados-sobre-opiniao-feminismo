@@ -1,0 +1,78 @@
+# Script sobre os dados do post <url>
+
+# fonte: http://media.folha.uol.com.br/datafolha/2019/04/15/0ccf1b7f5f71464e482dfa38406ec34efem.pdf
+## Pergunta: você se considera feminista?
+# Criar base de dados
+dados_mulheres_feministas <- data.frame(Resposta=c("Sim", "Não", "Não sabe"),
+                                        Mulheres=c(38,56,6),
+                                        Idade_16_a_24_anos=c(47,48,5),
+                                        Idade_25_a_34_anos=c(39,60,2),
+                                        Idade_35_a_44_anos=c(30,62,7),
+                                        Idade_45_a_59_anos=c(36,56,8),
+                                        Idade_60_ou_mais=c(42,51,6),
+                                        Fundamental=c(42,47,11),
+                                        Médio=c(33,63,4),
+                                        Superior=c(44,54,2))
+
+
+# Construir gráfico
+library(ggplot2)
+library(ggpubr) # cor viridis
+theme_set(theme_bw()) # para o fundo branco
+ggplot(dados_mulheres_feministas, aes(x=Resposta, y=Mulheres)) + 
+  geom_bar(stat = "identity", fill="#00b3b3") +
+  labs(y="% Mulheres",
+       title="Você se considera feminista? (Brasil, 2019)")
+
+# Pergunta: benefícios ou prejuízos
+## Para mulheres
+# Criar base de dados
+mulheres_bene_preju <- data.frame(
+  sexo = factor(c("Masculino", "Masculino","Masculino", "Masculino",
+                  "Feminino", "Feminino", "Feminino", "Feminino")),
+  resposta = factor(c("Mais benefícios", "Mais prejuízos", "Indiferente",
+                      "Não sabe","Mais benefícios", "Mais prejuízos", "Indiferente",
+                      "Não sabe")),
+  porcentagem = c(48,41,2,9,43,41,3,13))
+
+ggplot(data=mulheres_bene_preju, aes(x=resposta, y=porcentagem, fill=sexo)) +
+  geom_bar(stat="identity", width=0.5, position=position_dodge()) +
+  labs(x="",
+       y="%", fill="",
+       title="O feminismo traz mais benefícios \nou prejuízos para as mulheres?")
+
+## Para a sociedade
+sociedade_bene_preju <- data.frame(
+  sexo = factor(c("Masculino", "Masculino","Masculino", "Masculino",
+                  "Feminino", "Feminino", "Feminino", "Feminino")),
+  resposta = factor(c("Mais benefícios", "Mais prejuízos", "Indiferente",
+                      "Não sabe","Mais benefícios", "Mais prejuízos", "Indiferente",
+                      "Não sabe")),
+  porcentagem = c(49,41,2,8,45,38,2,14))
+
+ggplot(data=sociedade_bene_preju, aes(x=resposta, y=porcentagem, fill=sexo)) +
+  geom_bar(stat="identity", width=0.5, position=position_dodge()) +
+  labs(x="",
+       y="%", fill="",
+       title="O feminismo traz mais benefícios \nou prejuízos para a sociedade?")
+
+
+## Lapop_data - opiniao publica
+
+# abrir base de dados
+library(haven)
+lapop_2019 <- read_dta("Downloads/Brazil LAPOP AmericasBarometer 2019 v1.0_W.dta")
+attach(lapop_2019)
+lapop_2019_frame <- data.frame(w14a = factor(w14a, labels = c("Sim, se \njustifica", 
+                                                              "Não, não \nse justifica")), 
+                           q1 = factor(q1, labels = c("Homem", "Mulher")))
+
+
+
+# gráfico
+ggplot(lapop_2019_frame, aes(x=w14a, y=q1)) + 
+  geom_jitter(size=1, aes(col=q1), width = 0.2) +
+  labs(y="Sexo (pergunta do LAPOP)",
+       x="",
+       title="O aborto se justifica quando a saúde da \nmãe está em perigo?") +
+  theme(legend.position = "none")
